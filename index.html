@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://tetunori.github.io/p5MovRec/dist/1.0.0/basic/p5MovRec.js"></script>
+</head>
+<body>
+<script>
+    // ----- bullet class -----
+    class Bullet {
+        constructor(){
+            this._position = createVector()
+            this._velocity = createVector()
+            this._angle = 0
+        }
+
+        update() {
+            this._position.add(this._velocity)
+            this._draw()
+            return this._collisionField()
+        }
+
+        _draw() {
+        }
+
+        //弾がはみ出たかを確認
+        _collisionField() {
+            return !(this._position.x > 0 &&
+                this._position.x < width &&
+                this._position.y > 0 &&
+                this._position.y < height)
+        }
+
+        setPosition(postion) {
+            this._position = postion
+        }
+
+        setVelocity(velocity) {
+            this._velocity = velocity
+            this._angle = this._velocity.heading()
+        }
+
+
+
+    }
+
+    class Danmaku {
+
+        constructor() {
+            this._bullets = new Array()
+        }
+        update() {
+            this._updateBullets()
+        }
+        _updateBullets() {
+            this._bullets = this._bullets.filter(bullet => !bullet.update())
+        }
+    }
+
+    class Bullet01 extends Bullet {
+
+        constructor(color) {
+            super()
+            this._color = color
+        }
+
+        _draw(){
+            fill(this._color)
+            noStroke()
+            push()
+            translate(this._position.x, this._position.y)
+            push()
+            rotate(this._angle)
+            rect(-15,-8,30,16)
+            pop()
+            pop()
+        }
+    }
+
+    class Bullet02 extends Bullet {
+
+        constructor(){
+            super()
+
+            this._accel = createVector()
+        }
+
+        update() {
+            this._velocity.add(this._accel)
+            return super.update()
+        }
+
+        _draw(){
+            fill(255)
+            noStroke()
+            push()
+            translate(this._position.x, this._position.y)
+            push()
+            rotate(this._angle)
+            rect(-10,-1,30,10)
+            pop()
+            pop()
+        }
+
+        setAccel(accel) {
+            this._accel = accel
+        }
+
+    }
+
+    class Bullet03 extends Bullet {
+
+        constructor() {
+            super()
+            this._targetPosition = createVector()
+        }
+
+        update() {
+            let speed = this._velocity.mag()
+            this.setVelocity(this._velocity.add(this._targetPosition.copy().sub(this._position).normalize().mult(0.1)).normalize().mult(speed))
+            return super.update()
+        }
+
+        _draw(){
+            fill(255)
+            noStroke()
+            push()
+            translate(this._position.x, this._position.y)
+            push()
+            rotate(this._angle)
+            rect(-15,-8,30,10)
+            pop()
+            pop()
+        }
+
+        setTargetPosition(position) {
+            this._targetPosition = position
+        }
+
+    }
+
+    class Danmaku01 extends Danmaku {
+
+        constructor() {
+            super()
+        }
+
+        update(){
+            super.update()
+
+            if (frameCount % 2 === 0) {
+                for(let i = 0; i < 2; i++) {
+                    let bullet = new Bullet01(color(255))
+                    bullet.setPosition(createVector(width / 4 * (1 + i * 2), height / 3.5))
+                    bullet.setVelocity(createVector((i * 2 - 1), 0).rotate((i * 2 - 1) * frameCount * frameCount / 500.0).mult(4))
+                    this._bullets.push(bullet)
+                }
+            }
+
+            if (frameCount % 25 === 0) {
+                for (let i = 0; i < 4; i++) {
+                    let bullet = new Bullet01(color(118))
+                    bullet.setPosition(createVector(width / 2, height / 3.5))
+                    bullet.setVelocity(createVector(0, 4).rotate(-PI / 2 + PI / 8 + PI / 4 * i).mult(1))
+                    this._bullets.push(bullet)
+                }
+            }
+
+        }
+
+    }
+
+    class Danmaku02 extends Danmaku {
+
+        constructor() {
+            super()
+        }
+
+        update() {
+            super.update()
+
+            if (frameCount % 15 < 30) {
+                for (let i = 0; i < 6; i++) {
+                    let bullet = new Bullet02()
+                    bullet.setPosition(createVector(width / 2, height / 3.5))
+                    bullet.setVelocity(createVector(1,0).rotate(frameCount/20.0 + TWO_PI / 6 * i).mult((frameCount % 25) /10.0 + 4.0).mult(0.5))
+                    this._bullets.push(bullet)
+                }
+            }
+        }
+
+    }
+
+    class Danmaku03 extends Danmaku {
+
+        constructor() {
+            super()
+        }
+
+        update() {
+            super.update()
+
+            if(frameCount %2 === 1) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(width/2, height/3.5))
+                bullet.setVelocity(p5.Vector.random2D().mult(5))
+                this._bullets.push(bullet)
+            }
+
+
+            if (frameCount % 40 === 0) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(170, 10))
+                bullet.setVelocity(createVector(0.01, 1).mult(2))
+                this._bullets.push(bullet)
+            }
+            if (frameCount % 40 === 0) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(320, 10))
+                bullet.setVelocity(createVector(0.01, 1).mult(2))
+                this._bullets.push(bullet)
+            }
+            if (frameCount % 40 === 0) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(470, 10))
+                bullet.setVelocity(createVector(0.01, 1).mult(2))
+                this._bullets.push(bullet)
+            }
+            if (frameCount % 40 === 0) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(620, 10))
+                bullet.setVelocity(createVector(0.01, 1).mult(2))
+                this._bullets.push(bullet)
+            }
+
+            if (frameCount % 40 === 0) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(10, 170))
+                bullet.setVelocity(createVector(1, 0).mult(2))
+                this._bullets.push(bullet)
+            }
+            if (frameCount % 40 === 0) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(10, 320))
+                bullet.setVelocity(createVector(1, 0).mult(2))
+                this._bullets.push(bullet)
+            }
+            if (frameCount % 40 === 0) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(10, 470))
+                bullet.setVelocity(createVector(1, 0).mult(2))
+                this._bullets.push(bullet)
+            }
+            if (frameCount % 40 === 0) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(10, 620))
+                bullet.setVelocity(createVector(1, 0).mult(2))
+                this._bullets.push(bullet)
+            }
+            if (frameCount % 40 === 0) {
+                let bullet = new Bullet02()
+                bullet.setPosition(createVector(10, 770))
+                bullet.setVelocity(createVector(1, 0).mult(2))
+                this._bullets.push(bullet)
+            }
+
+
+        }
+
+    }
+
+    class Danmaku04 extends Danmaku {
+
+        constructor() {
+            super()
+        }
+
+        update() {
+            super.update()
+
+            if(frameCount % 60 === 0) {
+                for (let i = 0; i < 12; i++) {
+                    let bullet = new Bullet03()
+                    bullet.setPosition(createVector(width / 2, height / 3.5 ))
+                    bullet.setVelocity(createVector(1, 0).rotate(TWO_PI / 12 * i).mult(5))
+                    bullet.setTargetPosition(createVector(mouseX, mouseY))
+                    this._bullets.push(bullet)
+                }
+            }
+        }
+    }
+
+
+    //ここで実行
+    let danmaku
+    let x = 400;
+    let y = 400;
+
+    function setup() {
+
+        createCanvas(800, 900);
+
+        danmaku = new Danmaku03()
+
+    }
+
+    function draw() {
+        background(0)
+        danmaku.update()
+
+        circle(x, y, 15);
+
+        x=mouseX;
+        y=mouseY;
+
+
+    }
+</script>
+</body>
+</html>

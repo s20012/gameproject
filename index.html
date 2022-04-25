@@ -80,10 +80,9 @@
 
     class Bullet02 extends Bullet {
 
-        constructor(){
+        constructor(color) {
             super()
-
-            this._accel = createVector()
+            this._color = color
         }
 
         update() {
@@ -92,7 +91,7 @@
         }
 
         _draw(){
-            fill(255)
+            fill(this._color)
             noStroke()
             push()
             translate(this._position.x, this._position.y)
@@ -181,8 +180,8 @@
             super.update()
 
             if (frameCount % 15 < 30) {
-                for (let i = 0; i < 6; i++) {
-                    let bullet = new Bullet02()
+                for (let i = 0; i < 2; i++) {
+                    let bullet = new Bullet02(color(255))
                     bullet.setPosition(createVector(width / 2, height / 3.5))
                     bullet.setVelocity(createVector(1,0).rotate(frameCount/20.0 + TWO_PI / 6 * i).mult((frameCount % 25) /10.0 + 4.0).mult(0.5))
                     this._bullets.push(bullet)
@@ -202,7 +201,7 @@
             super.update()
 
             if(frameCount %2 === 1) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(255))
                 bullet.setPosition(createVector(width/2, height/3.5))
                 bullet.setVelocity(p5.Vector.random2D().mult(5))
                 this._bullets.push(bullet)
@@ -210,56 +209,56 @@
 
 
             if (frameCount % 40 === 0) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(108))
                 bullet.setPosition(createVector(170, 10))
                 bullet.setVelocity(createVector(0.01, 1).mult(2))
                 this._bullets.push(bullet)
             }
             if (frameCount % 40 === 0) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(108))
                 bullet.setPosition(createVector(320, 10))
                 bullet.setVelocity(createVector(0.01, 1).mult(2))
                 this._bullets.push(bullet)
             }
             if (frameCount % 40 === 0) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(108))
                 bullet.setPosition(createVector(470, 10))
                 bullet.setVelocity(createVector(0.01, 1).mult(2))
                 this._bullets.push(bullet)
             }
             if (frameCount % 40 === 0) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(108))
                 bullet.setPosition(createVector(620, 10))
                 bullet.setVelocity(createVector(0.01, 1).mult(2))
                 this._bullets.push(bullet)
             }
 
             if (frameCount % 40 === 0) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(108))
                 bullet.setPosition(createVector(10, 170))
                 bullet.setVelocity(createVector(1, 0).mult(2))
                 this._bullets.push(bullet)
             }
             if (frameCount % 40 === 0) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(108))
                 bullet.setPosition(createVector(10, 320))
                 bullet.setVelocity(createVector(1, 0).mult(2))
                 this._bullets.push(bullet)
             }
             if (frameCount % 40 === 0) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(108))
                 bullet.setPosition(createVector(10, 470))
                 bullet.setVelocity(createVector(1, 0).mult(2))
                 this._bullets.push(bullet)
             }
             if (frameCount % 40 === 0) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(108))
                 bullet.setPosition(createVector(10, 620))
                 bullet.setVelocity(createVector(1, 0).mult(2))
                 this._bullets.push(bullet)
             }
             if (frameCount % 40 === 0) {
-                let bullet = new Bullet02()
+                let bullet = new Bullet02(color(108))
                 bullet.setPosition(createVector(10, 770))
                 bullet.setVelocity(createVector(1, 0).mult(2))
                 this._bullets.push(bullet)
@@ -301,7 +300,7 @@
 
         createCanvas(800, 900);
 
-        danmaku = new Danmaku03()
+        danmaku = new Danmaku02()
 
     }
 
